@@ -18,9 +18,10 @@ struct gbm_params {
 
 struct heston_params : public gbm_params {
   /* for greek letter meaning, see wikipage */
-  double kappa;
-  double theta;
-  double xi;
+  double kappa; // mean-reversion rate
+  double theta; // long term variance
+  double xi; // vol of vol
+  double rho; // correlation
 };
 
 struct gaussian {

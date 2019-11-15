@@ -20,11 +20,17 @@ int main() {
 
   heston::instrument_data inst_data = {strike, option_type};
   heston::gbm_params diff_params = {interest_rate, ivol, init_px};
-  auto jump_p = heston::no_jump();
+  heston::gaussian gaussian_params = {-5E-3, 1E-1};
+  // auto jump_p = heston::no_jump();
+  heston::gaussian_jump jump_p = {gaussian_params};
   heston::gbm_process diff_p = {diff_params};
   auto ul_p = heston::underlying_process(diff_p, jump_p);
   auto calc = heston::calculator();
   auto opt_px = calc.calc_option_price(inst_data, ul_p, voltime);
   std::cout << std::setprecision(10) << opt_px << std::endl;
+
+  auto implied_vol = heston::calc_implied_vol(
+      strike, fwd_px, voltime, interest_rate, opt_px, option_type);
+  std::cout << implied_vol << std::endl;
   return 0;
 }
