@@ -13,12 +13,12 @@ using complex_d = std::complex<double>;
 
 class base_jump_process {
  public:
-  virtual complex_d evaluate(const complex_d&) const = 0;
+  virtual complex_d evaluate(const complex_d &) const = 0;
 };
 
 class base_diffusive_process {
  public:
-  virtual complex_d evaluate(const complex_d&, const double) const = 0;
+  virtual complex_d evaluate(const complex_d &, const double) const = 0;
   virtual double get_interest_rate() const = 0;
   virtual double get_init_vol() const = 0;
   virtual double get_init_price() const = 0;
@@ -26,9 +26,10 @@ class base_diffusive_process {
 
 class underlying_process {
  public:
-  underlying_process(base_diffusive_process& diffusive, base_jump_process& jump)
-      : diffusive{diffusive}, jump{jump} {}
-  complex_d evaluate(const complex_d& z, const double t) const {
+  underlying_process(const base_diffusive_process &diffusive,
+                     const base_jump_process &jump)
+      : diffusive(diffusive), jump(jump) {}
+  complex_d evaluate(const complex_d &z, const double t) const {
     return jump.evaluate(z) * diffusive.evaluate(z, t);
   }
 
@@ -37,16 +38,16 @@ class underlying_process {
   double get_init_price() const { return diffusive.get_init_price(); }
 
  private:
-  base_diffusive_process& diffusive;
-  base_jump_process& jump;
+  const base_diffusive_process &diffusive;
+  const base_jump_process &jump;
 };
 
 /* diffusive process */
 template <typename diffusive_t>
 class diffusive_process : public base_diffusive_process {
  public:
-  diffusive_process(const diffusive_t& params) : diffusive_params(params) {}
-  virtual complex_d evaluate(const complex_d&,
+  diffusive_process(const diffusive_t &params) : diffusive_params(params) {}
+  virtual complex_d evaluate(const complex_d &,
                              const double) const override final;
 
   virtual double get_init_vol() const override final {
@@ -68,8 +69,8 @@ class diffusive_process : public base_diffusive_process {
 template <typename jump_t>
 class jump_process : public base_jump_process {
  public:
-  jump_process(const jump_t& params) : jump_params(params) {}
-  virtual complex_d evaluate(const complex_d&) const override final;
+  jump_process(const jump_t &params) : jump_params(params) {}
+  virtual complex_d evaluate(const complex_d &) const override final;
 
  private:
   jump_t jump_params;
@@ -77,7 +78,7 @@ class jump_process : public base_jump_process {
 
 class no_jump : public base_jump_process {
  public:
-  virtual complex_d evaluate(const complex_d&) const override final {
+  virtual complex_d evaluate(const complex_d &) const override final {
     return complex_d(1.0, 0);
   }
 };
