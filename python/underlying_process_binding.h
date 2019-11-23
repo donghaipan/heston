@@ -7,20 +7,6 @@
 
 namespace py = pybind11;
 
-// template <typename jump_t>
-// std::unique_ptr<heston::base_jump_process>
-// jump_process_factory(const jump_t &params) {
-//   return std::unique_ptr<heston::base_jump_process>(
-//       new heston::jump_process<jump_t>(params));
-// }
-//
-// template <typename diff_t>
-// std::unique_ptr<heston::base_diffusive_process>
-// diffusive_process_factory(const diff_t &params) {
-//   return std::unique_ptr<heston::base_diffusive_process>(
-//       new heston::diffusive_process<diff_t>(params));
-// }
-
 class py_base_jump_process : public heston::base_jump_process {
  public:
   using heston::base_jump_process::base_jump_process;
@@ -65,16 +51,14 @@ void init_underlying_process_binding(py::module &m) {
       .def("evaluate", &heston::base_jump_process::evaluate);
 
   py::class_<heston::no_jump, heston::base_jump_process>(m, "no_jump")
-      .def(py::init<>());
+      .def(py::init<const heston::jumpless &>());
 
   py::class_<heston::gaussian_jump, heston::base_jump_process>(m,
                                                                "gaussian_jump")
-      // .def(py::init<>())
       .def(py::init<const heston::gaussian &>());
 
   py::class_<heston::mixed_gaussian_jump, heston::base_jump_process>(
       m, "mixed_gaussian_jump")
-      // .def(py::init<>())
       .def(py::init<const heston::mixed_gaussian &>());
 
   // binding diffusive process
@@ -89,14 +73,12 @@ void init_underlying_process_binding(py::module &m) {
 
   py::class_<heston::gbm_process, heston::base_diffusive_process>(m,
                                                                   "gbm_process")
-      // .def(py::init<>())
       .def(py::init<const heston::gbm_params &>());
 
   py::class_<heston::heston_process, heston::base_diffusive_process>(
       m, "heston_process")
-      // .def(py::init<>())
       .def(py::init<const heston::heston_params &>());
-  //
+
   // underlying processes
   py::class_<heston::underlying_process>(m, "underlying_process")
       .def(py::init<heston::base_diffusive_process &,
@@ -105,13 +87,4 @@ void init_underlying_process_binding(py::module &m) {
       .def("get_interest_rate", &heston::underlying_process::get_interest_rate)
       .def("get_init_vol", &heston::underlying_process::get_init_vol)
       .def("get_init_price", &heston::underlying_process::get_init_price);
-
-  //  m.def("jump_process_factory", &jump_process_factory<heston::gaussian>);
-  //  m.def("jump_process_factory",
-  //  &jump_process_factory<heston::mixed_gaussian>);
-  //
-  //  m.def("diffusive_process_factory",
-  //        &diffusive_process_factory<heston::gbm_params>);
-  //  m.def("diffusive_process_factory",
-  //        &diffusive_process_factory<heston::heston_params>);
 }

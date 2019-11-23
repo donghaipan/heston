@@ -76,15 +76,10 @@ class jump_process : public base_jump_process {
   jump_t jump_params;
 };
 
-class no_jump : public base_jump_process {
- public:
-  virtual complex_d evaluate(const complex_d &) const override final {
-    return complex_d(1.0, 0);
-  }
-};
-
 using gbm_process = diffusive_process<gbm_params>;
 using heston_process = diffusive_process<heston_params>;
+
+using no_jump = jump_process<jumpless>;
 using gaussian_jump = jump_process<gaussian>;
 using mixed_gaussian_jump = jump_process<mixed_gaussian>;
 
