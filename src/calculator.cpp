@@ -1,6 +1,6 @@
-#include "calculator.h"
-#include "fundamental_types.h"
-#include "underlying_process.h"
+#include <calculator.h>
+#include <fundamental_types.h>
+#include <underlying_process.h>
 
 namespace heston {
 double calculator::calc_option_price(const instrument_data& inst_data,

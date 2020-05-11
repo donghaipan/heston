@@ -1,5 +1,5 @@
-#include "underlying_process.h"
-#include "fundamental_types.h"
+#include <fundamental_types.h>
+#include <underlying_process.h>
 
 namespace heston {
 
@@ -7,6 +7,11 @@ inline complex_d gaussian_char_func(const gaussian& params,
                                     const complex_d& z) {
   return std::exp(complex_d(0.0, params.mu) * z -
                   0.5 * params.sigma * params.sigma * z * z);
+}
+
+template <>
+complex_d no_jump::evaluate(const complex_d& z) const {
+  return complex_d(1.0, 0.0);
 }
 
 template <>
@@ -51,7 +56,7 @@ complex_d heston_process::evaluate(const complex_d& z,
   const auto ivol = get_init_vol();
 
   const auto vol_square = ivol * ivol;
-  auto z_sq_z = (z * z) + z * complex_d(0, 1);
+  auto z_sq_z = (z * z) + z * complex_d(0, 1.0);
   auto kappa_z = kappa - z * complex_d(0, rho * xi);
   auto gamma = std::sqrt((kappa_z * kappa_z) + z_sq_z * xi * xi);
   auto em = exp(gamma * -voltime);
@@ -61,7 +66,7 @@ complex_d heston_process::evaluate(const complex_d& z,
        2.0 * std::log(1.0 + 0.5 * (kappa_z - gamma) * (1.0 - em) / gamma)) *
       kappa * theta / (xi * xi);
   auto tm2 = -vol_square * z_sq_z * (1.0 - em) /
-           (2.0 * gamma * em + (gamma + kappa_z) * (1.0 - em));
+             (2.0 * gamma * em + (gamma + kappa_z) * (1.0 - em));
   return exp(tm0 + tm1 + tm2);
 }
 

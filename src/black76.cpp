@@ -1,8 +1,8 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "black76.h"
-#include "fundamental_types.h"
+#include <black76.h>
+#include <fundamental_types.h>
 
 // double normal_pdf(const double x) {
 //  return exp(-0.5 * x * x) * M_SQRT1_2 * sqrt(M_1_PI);
@@ -19,9 +19,9 @@ double d_plus(const double strike, const double fwd_price,
 
 double b76_price(const double strike, const double fwd_price,
                  const double voltime, const double ivol,
-                 const double interest_rate, const option_t option_type) {
+                 const double interest_rate, const option_t call_put) {
   double vol_sqrt_time = ivol * std::sqrt(voltime);
-  double is_put = (option_type == option_t::put);
+  double is_put = (call_put == option_t::put);
 
   if (vol_sqrt_time < 1E-6) {
     return (fwd_price > strike ? (fwd_price - strike) : 0.0) -
@@ -37,12 +37,12 @@ double b76_price(const double strike, const double fwd_price,
 
 double calc_implied_vol(const double strike, const double forward,
                         const double voltime, const double interest_rate,
-                        const double option_price, const option_t option_type) {
+                        const double option_price, const option_t call_put) {
   double lower_bd = 0.0;
   double upper_bd = 1.0;
   int count = 0;
   double est = b76_price(strike, forward, voltime, (lower_bd + upper_bd) / 2,
-                         interest_rate, option_type);
+                         interest_rate, call_put);
   while (std::abs(est - option_price) > 1E-8) {
     if (est > option_price) {
       upper_bd = (lower_bd + upper_bd) / 2;
@@ -50,7 +50,7 @@ double calc_implied_vol(const double strike, const double forward,
       lower_bd = (lower_bd + upper_bd) / 2;
     }
     est = b76_price(strike, forward, voltime, (lower_bd + upper_bd) / 2,
-                    interest_rate, option_type);
+                    interest_rate, call_put);
     count++;
     if (count > 2000) {
       throw std::runtime_error("Implied vol solver does not converge.");

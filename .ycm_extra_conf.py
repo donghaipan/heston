@@ -85,6 +85,8 @@ flags = [
     'cpp/ycm/benchmarks/benchmark/include',
     '-I',
     './include',
+    '-I',
+    './pybind11/include',
 ]
 
 # Clang automatically sets the '-std=' flag to 'c++14' for MSVC 2015 or later,
