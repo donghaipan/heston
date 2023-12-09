@@ -3,10 +3,10 @@
 #include <complex>
 #include <sstream>
 
-#include <black76.h>
-#include <calculator.h>
-#include <fundamental_types.h>
-#include <underlying_process.h>
+#include "heston/black76.h"
+#include "heston/calculator.h"
+#include "heston/fundamental_types.h"
+#include "heston/underlying_process.h"
 
 #include "repr_helpers.h"
 

@@ -1,35 +1,32 @@
-#include <fundamental_types.h>
-#include <underlying_process.h>
+#include "heston/underlying_process.h"
+#include "heston/fundamental_types.h"
 
 namespace heston {
 
-inline complex_d gaussian_char_func(const gaussian& params,
-                                    const complex_d& z) {
+inline complex_d gaussian_char_func(const gaussian &params,
+                                    const complex_d &z) {
   return std::exp(complex_d(0.0, params.mu) * z -
                   0.5 * params.sigma * params.sigma * z * z);
 }
 
-template <>
-complex_d no_jump::evaluate(const complex_d& z) const {
+template <> complex_d no_jump::evaluate(const complex_d &z) const {
   return complex_d(1.0, 0.0);
 }
 
-template <>
-complex_d gaussian_jump::evaluate(const complex_d& z) const {
+template <> complex_d gaussian_jump::evaluate(const complex_d &z) const {
   return gaussian_char_func(jump_params, z);
 }
 
-template <>
-complex_d mixed_gaussian_jump::evaluate(const complex_d& z) const {
+template <> complex_d mixed_gaussian_jump::evaluate(const complex_d &z) const {
   const auto prob_up = jump_params.prob_up;
-  const auto& up_mv = jump_params.up_mv;
-  const auto& down_mv = jump_params.down_mv;
+  const auto &up_mv = jump_params.up_mv;
+  const auto &down_mv = jump_params.down_mv;
   return prob_up * gaussian_char_func(up_mv, z) +
          (1.0 - prob_up) * gaussian_char_func(down_mv, z);
 }
 
 template <>
-complex_d gbm_process::evaluate(const complex_d& z,
+complex_d gbm_process::evaluate(const complex_d &z,
                                 const double voltime) const {
   const auto init_price = get_init_price();
   const auto interest_rate = get_interest_rate();
@@ -44,7 +41,7 @@ complex_d gbm_process::evaluate(const complex_d& z,
 }
 
 template <>
-complex_d heston_process::evaluate(const complex_d& z,
+complex_d heston_process::evaluate(const complex_d &z,
                                    const double voltime) const {
   const auto kappa = diffusive_params.kappa;
   const auto theta = diffusive_params.theta;
@@ -70,4 +67,4 @@ complex_d heston_process::evaluate(const complex_d& z,
   return exp(tm0 + tm1 + tm2);
 }
 
-}  // namespace heston
+} // namespace heston

@@ -1,18 +1,25 @@
-cmake_minimum_required(VERSION 3.10)
-project(heston)
+cmake_minimum_required(VERSION 3.22)
+project(heston VERSION 1.0)
 
-set(CMAKE_CXX_STANDARD 14)
+if(NOT CMAKE_BUILD_TYPE)
+  message(STATUS "No build type selected, default to Release")
+  set(CMAKE_BUILD_TYPE
+      "Release"
+      CACHE STRING "Build type (default Release)" FORCE)
+endif()
 
-add_subdirectory(pybind11)
+if(NOT CMAKE_BUILD_TYPE MATCHES "^(Debug|Release|RelWithDebInfo|MinSizeRel)$")
+  message(
+    FATAL_ERROR
+      "Expected CMAKE_BUILD_TYPE is Debug, Release, RelWithDebInfo or MinSizeRel, got ${CMAKE_BUILD_TYPE}"
+  )
+endif()
 
-set(SOURCES
-        python/python_binding.cpp
-        src/black76.cpp
-        src/calculator.cpp
-        src/underlying_process.cpp)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 20)
 
-pybind11_add_module(heston ${SOURCES})
+find_package(Python COMPONENTS Interpreter Development)
+find_package(pybind11 REQUIRED)
 
-target_include_directories(heston
-        PRIVATE
-        ${PROJECT_SOURCE_DIR}/include)
+add_subdirectory(src)
+add_subdirectory(python)

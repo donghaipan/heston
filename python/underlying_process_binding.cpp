@@ -2,8 +2,8 @@
 
 #include <complex>
 
-#include <fundamental_types.h>
-#include <underlying_process.h>
+#include "heston/fundamental_types.h"
+#include "heston/underlying_process.h"
 
 namespace py = pybind11;
 

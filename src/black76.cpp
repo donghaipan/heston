@@ -1,8 +1,8 @@
 #include <cmath>
 #include <stdexcept>
 
-#include <black76.h>
-#include <fundamental_types.h>
+#include "heston/black76.h"
+#include "heston/fundamental_types.h"
 
 // double normal_pdf(const double x) {
 //  return exp(-0.5 * x * x) * M_SQRT1_2 * sqrt(M_1_PI);
@@ -59,4 +59,4 @@ double calc_implied_vol(const double strike, const double forward,
   return (lower_bd + upper_bd) / 2;
 };
 
-}  // namespace heston
+} // namespace heston
